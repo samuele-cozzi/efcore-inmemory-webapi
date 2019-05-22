@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,6 +10,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.EntityFrameworkCore;
+using efcore_inmemory_webapi.Models;
 
 namespace efcore_inmemory_webapi
 {
@@ -25,7 +27,16 @@ namespace efcore_inmemory_webapi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<TodoContext>(opt =>
+                opt.UseInMemoryDatabase("TodoList"));
+
+            var connection = Configuration.GetConnectionString("BloggingDatabase");
+            services.AddDbContext<BloggingContext>
+                (options => options.UseSqlite(connection));
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
